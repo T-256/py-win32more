@@ -251,9 +251,9 @@ def easycast(obj, type_):
 
 
 def get_type_hints(prototype, **kwargs):
-    hints = _get_type_hints(prototype, localns=getattr(prototype, "__dict__", None), **kwargs)
+    hints = _get_type_hints(prototype, localns=CustomGet(prototype), **kwargs)
     for name, type_ in hints.items():
-        if type_ is None.__class__:
+        if type_ is type(None):
             hints[name] = None
     return hints
 
@@ -489,6 +489,21 @@ class ConstantLazyLoader:
         return self._prototype()
 
 
+class CustomGet(dict):
+    def __init__(self, mod, *args, **kwargs):
+        self._mod = mod
+        super().__init__(*args, **kwargs)
+
+    def __getitem__(self, key):
+        mapping = getattr(self._mod, '__dict__', {})
+        if key in mapping:
+            return mapping[key]
+        elif isinstance(self._mod, types.ModuleType):
+            return getattr(self._mod, key)
+        else:
+            return getattr(sys.modules[self._mod.__module__], key)
+
+
 class ConstantWithAnnotations:
     def __init__(self, prototype, annotation, module):
         self._prototype = prototype
@@ -496,7 +511,7 @@ class ConstantWithAnnotations:
         self._module = module
 
     def __commit__(self):
-        _get_type_hints(self, localns=self._module.__dict__)
+        _get_type_hints(self, localns=CustomGet(self._module))
         return self._prototype
 
 
