@@ -492,9 +492,6 @@ class ConstantLazyLoader:
 class ConstantWithAnnotations:
     def __init__(self, prototype, annotation, module):
         self._prototype = prototype
-        # Maybe generator could do this for us, like func/struct parameters hints.
-        if annotation not in EXCLUDED_ATTRS and not annotation.startswith('win32more.'):
-            annotation = f"{module.__name__}.{annotation}"
         self.__annotations__ = {'_': annotation}
         self._module = module
 
