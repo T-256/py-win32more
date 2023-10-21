@@ -534,7 +534,7 @@ def make_ready(mod: str) -> None:
                 issubclass(prototype, (EasyCastBase, ComPtr)) and
                 prototype.__module__ == mod
             ) or
-            isinstance(prototype, types.FunctionType) and prototype.__module__ == "win32more"
+            isinstance(prototype, types.FunctionType)
         ):
             setattr(obj, f"_unused_{name}", prototype)
             delattr(obj, name)
