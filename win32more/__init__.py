@@ -472,7 +472,7 @@ class GetAttr:
         setattr(self._obj, name, prototype)
 
         if print_used:
-            print(f"[USED] {self._mod}.{name}")
+            print(".".join(self._mod.split('.')[1:] + [name]))
 
         if hasattr(prototype, '__commit__'):
             prototype = prototype.__commit__()
